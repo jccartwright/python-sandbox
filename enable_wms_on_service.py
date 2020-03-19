@@ -51,14 +51,14 @@ def main():
             continue
 
         if wms_extension['enabled'] == 'true':
-            logging.info(f"WMS is already enabled on {args.name}")
+            logging.info(f"WMS is already enabled on {service}")
             continue
 
         # warning: mutates the object which is passed in
         enable_wms(wms_extension)
 
         try:
-            update_service(token, args.server, args.name, service_info)
+            update_service(token, args.server, service, service_info)
         except Exception as e:
             logging.error(f"failed to enable WMS on service {service}")
             continue
@@ -82,7 +82,6 @@ def get_wms_extension(service_info):
 
 
 def enable_wms(extension, state=True):
-    logging.info('enabling WMS...')
     if state:
         extension['enabled'] = 'true'
     else:
@@ -123,6 +122,7 @@ def get_service_info(token, servername, servicename):
 
 
 def update_service(token, servername, servicename, serviceinfo):
+    logging.info(f'enabling WMS on service {servicename}...')
     # print(serviceinfo)
     url = f"https://{servername}:6443/arcgis/admin/services/{servicename}.MapServer/edit"
     params = urlencode({'token': token, 'f': 'json', 'service': json.dumps(serviceinfo)})
@@ -132,7 +132,6 @@ def update_service(token, servername, servicename, serviceinfo):
     if r.status_code != 200:
         raise Exception(f"Error while updating service properties for {servicename}")
     data = r.json()
-
     if not assert_json_success(data):
         # logging.warning(data)
         raise Exception("Error: response object represents an error.")
