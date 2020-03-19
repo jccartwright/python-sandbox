@@ -6,7 +6,10 @@ import os
 import sys
 from urllib.parse import urlencode
 import json
+import urllib3
 
+# ignore warning about NGDC-signed certificate
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def main():
     # setup command line arguments
@@ -48,24 +51,24 @@ def main():
             continue
 
         if wms_extension['enabled'] == 'true':
-            logging.info(f"WMS is already enabled on {args.servicename}")
+            logging.info(f"WMS is already enabled on {args.name}")
             continue
 
         # warning: mutates the object which is passed in
         enable_wms(wms_extension)
 
         try:
-            update_service(token, args.servername, args.servicename, service_info)
-        except Exception:
+            update_service(token, args.server, args.name, service_info)
+        except Exception as e:
             logging.error(f"failed to enable WMS on service {service}")
             continue
 
 
 def get_service_names(server, folder):
-    url = f"https://{server}/arcgis/rest/services/{folder}"
+    url = f"https://{server}:6443/arcgis/rest/services/{folder}"
     params = {'f': 'json'}
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
-    r = requests.get(url, headers=headers, params=params)
+    r = requests.get(url, headers=headers, params=params, verify=False)
     if r.status_code != 200:
         raise Exception(f"error retrieving list of services in folder {folder}")
     data = r.json()
@@ -87,10 +90,10 @@ def enable_wms(extension, state=True):
 
 
 def get_token(username, password, servername):
-    url = f"https://{servername}/arcgis/admin/generateToken"
+    url = f"https://{servername}:6443/arcgis/admin/generateToken"
     params = urlencode({'username': username, 'password': password, 'client': 'requestip', 'f': 'json'})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
-    r = requests.post(url, headers=headers, data=params)
+    r = requests.post(url, headers=headers, data=params, verify=False)
     if r.status_code != 200:
         raise Exception("Error while fetching tokens from admin URL. Please check the URL and try again.")
     data = r.json()
@@ -103,11 +106,11 @@ def get_token(username, password, servername):
 
 
 def get_service_info(token, servername, servicename):
-    url = f"https://{servername}/arcgis/admin/services/{servicename}.MapServer"
+    url = f"https://{servername}:6443/arcgis/admin/services/{servicename}.MapServer"
     params = urlencode({'token': token, 'f': 'json'})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
 
-    r = requests.post(url, headers=headers, data=params)
+    r = requests.post(url, headers=headers, data=params, verify=False)
     if r.status_code != 200:
         raise Exception("Error while fetching tokens from admin URL. Please check the URL and try again.")
     data = r.json()
@@ -121,11 +124,11 @@ def get_service_info(token, servername, servicename):
 
 def update_service(token, servername, servicename, serviceinfo):
     # print(serviceinfo)
-    url = f"https://{servername}/arcgis/admin/services/{servicename}.MapServer/edit"
+    url = f"https://{servername}:6443/arcgis/admin/services/{servicename}.MapServer/edit"
     params = urlencode({'token': token, 'f': 'json', 'service': json.dumps(serviceinfo)})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
 
-    r = requests.post(url, headers=headers, data=params)
+    r = requests.post(url, headers=headers, params=params, verify=False)
     if r.status_code != 200:
         raise Exception(f"Error while updating service properties for {servicename}")
     data = r.json()
@@ -133,8 +136,6 @@ def update_service(token, servername, servicename, serviceinfo):
     if not assert_json_success(data):
         # logging.warning(data)
         raise Exception("Error: response object represents an error.")
-
-    return data
 
 
 def assert_json_success(json):
