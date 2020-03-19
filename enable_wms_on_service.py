@@ -11,14 +11,14 @@ import json
 def main():
     # setup command line arguments
     arg_parser = argparse.ArgumentParser(
-        description="""Enables the WMS extension on the specified map or image service. If a folder name is provided, 
-        all services within that folder will be enabled"""
+        description="""Enables the WMS extension on the specified MapServer instance. If a folder name is provided, 
+        all map services within that folder will be enabled"""
     )
     arg_parser.add_argument("username", help="user name")
     arg_parser.add_argument("password", help="password")
     arg_parser.add_argument("server", help="fully qualified server name")
-    arg_parser.add_argument("name", help="folder name or relative path to the map or image service")
-    arg_parser.add_argument("-t", '--target_type', default='service', help="name argument a folder or service? defaults to service")
+    arg_parser.add_argument("name", help="folder name or relative path to the map service")
+    arg_parser.add_argument("-t", '--target_type', default='service', help="indicates folder or service. defaults to service")
     arg_parser.add_argument("-r", "--report", help="only report on whether WMS is enabled", action="store_true")
     args = arg_parser.parse_args()
 
@@ -121,7 +121,7 @@ def get_service_info(token, servername, servicename):
 
 def update_service(token, servername, servicename, serviceinfo):
     # print(serviceinfo)
-    url = f"https://{servername}/arcgis/admin/services/{servicename}/edit"
+    url = f"https://{servername}/arcgis/admin/services/{servicename}.MapServer/edit"
     params = urlencode({'token': token, 'f': 'json', 'service': json.dumps(serviceinfo)})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
 
