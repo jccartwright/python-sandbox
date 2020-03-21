@@ -27,20 +27,21 @@ def main():
     arg_parser.add_argument("-p", "--port", default="6443", help="server port")
     args = arg_parser.parse_args()
 
+    server = f"{args.server}:{args.port}"
+
     target_type = args.target_type
     if target_type == 'folder' and args.name:
-        services = get_service_names(args.server, args.name)
+        services = get_service_names(server, args.name)
     elif args.name:
         services = [args.name]
     else:
         # no name given, report on all services
         print('reporting on all services')
         services = []
-        get_running_services(args.server, services)
+        get_running_services(server, services)
 
-    token = get_token(args.username, args.password, args.server)
+    token = get_token(args.username, args.password, server)
 
-    server = f"{args.server}:{args.port}"
 
     for service in services:
         try:
