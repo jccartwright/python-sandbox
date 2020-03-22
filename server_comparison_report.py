@@ -31,24 +31,31 @@ def main(args):
                         'mapservices': mapservice_list, 'imageservices': imageservice_list})
 
     # build a list of unique service names across all servers
-    all_services = []
+    all_mapservices = []
     for server in servers:
-        all_services.extend(server['services'])
+        all_mapservices.extend(server['mapservices'])
 
     # convert to a list of unique service names
-    services = sorted(list(set(all_services)))
+    mapservices = sorted(list(set(all_mapservices)))
+
+    all_imageservices = []
+    for server in servers:
+        all_imageservices.extend(server['imageservices'])
+
+    # convert to a list of unique service names
+    imageservices = sorted(list(set(all_imageservices)))
 
     # report services not found on both servers
     print('Map Services')
     print(f"name\t{servers[0]['name']}\t{servers[1]['name']}")
-    for service in services:
+    for service in mapservices:
         if service not in servers[0]['mapservices'] or service not in servers[1]['mapservices']:
             print(f"{service}\t{service in servers[0]['mapservices']}\t{service in servers[1]['mapservices']}")
 
     print('\n')
     print('Image Services')
     print(f"name\t{servers[0]['name']}\t{servers[1]['name']}")
-    for service in services:
+    for service in imageservices:
         if service not in servers[0]['imageservices'] or service not in servers[1]['imageservices']:
             print(f"{service}\t{service in servers[0]['imageservices']}\t{service in servers[1]['imageservices']}")
 
