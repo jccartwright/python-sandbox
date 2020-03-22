@@ -19,13 +19,16 @@ def main(args):
     for i in range(0,2):
         name = args.server[i]
         password = args.password[i]
-        username = args.password[i]
+        username = args.username[i]
         uri = f"{name}:{args.port}"
         token = get_token(username, password, uri)
-        service_list = []
-        get_service_names(uri, service_list)
+        mapservice_list = []
+        get_service_names(uri, mapservice_list)
+        imageservice_list = []
+        get_service_names(uri, imageservice_list, None, 'ImageServer')
+
         servers.append({'name': name, 'username': username, 'password': password, 'port': args.port, 'token': token,
-                        'services': service_list})
+                        'mapservices': mapservice_list, 'imageservices': imageservice_list})
 
     # build a list of unique service names across all servers
     all_services = []
@@ -35,10 +38,19 @@ def main(args):
     # convert to a list of unique service names
     services = sorted(list(set(all_services)))
 
+    # report services not found on both servers
+    print('Map Services')
     print(f"name\t{servers[0]['name']}\t{servers[1]['name']}")
     for service in services:
-        if service not in servers[0]['services'] or service not in servers[1]['services']:
-            print(f"{service}\t{service in servers[0]['services']}\t{service in servers[1]['services']}")
+        if service not in servers[0]['mapservices'] or service not in servers[1]['mapservices']:
+            print(f"{service}\t{service in servers[0]['mapservices']}\t{service in servers[1]['mapservices']}")
+
+    print('\n')
+    print('Image Services')
+    print(f"name\t{servers[0]['name']}\t{servers[1]['name']}")
+    for service in services:
+        if service not in servers[0]['imageservices'] or service not in servers[1]['imageservices']:
+            print(f"{service}\t{service in servers[0]['imageservices']}\t{service in servers[1]['imageservices']}")
 
     # for service in services:
     #     try:
