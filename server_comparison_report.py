@@ -16,12 +16,16 @@ def main(args):
     # augment each server name with port number. all servers must use same port.
     # servers = [f"{i}:{args.port}" for i in args.target_server]
     servers = []
-    for name in args.target_server:
+    for i in range(0,2):
+        name = args.server[i]
+        password = args.password[i]
+        username = args.password[i]
         uri = f"{name}:{args.port}"
-        token = get_token(args.username, args.password, uri)
+        token = get_token(username, password, uri)
         service_list = []
         get_service_names(uri, service_list)
-        servers.append({'name': name, 'port': args.port, 'token': token, 'services': service_list})
+        servers.append({'name': name, 'username': username, 'password': password, 'port': args.port, 'token': token,
+                        'services': service_list})
 
     # build a list of unique service names across all servers
     all_services = []
@@ -112,10 +116,10 @@ if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
         description="""report on the differences in map/image services on the specified server(s)"""
     )
-    arg_parser.add_argument("--username", required=True, help="user name")
-    arg_parser.add_argument("--password", required=True, help="password")
+    arg_parser.add_argument("--username", action="append", required=True, help="user name")
+    arg_parser.add_argument("--password", action="append", required=True, help="password")
     arg_parser.add_argument("--port", default="6443", help="server port")
-    arg_parser.add_argument('--server', action='append', dest='target_server', required=True,
+    arg_parser.add_argument('--server', action='append', required=True,
                             help="fully-qualified target server name. specify once for each server")
     arg_parser.add_argument("--diff", help="report only differences between servers", action="store_true")
     args = arg_parser.parse_args()
