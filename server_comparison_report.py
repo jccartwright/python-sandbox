@@ -53,12 +53,13 @@ def main(args):
             if len(diff1):
                 print(f"services missing from {servers[0]['name']}: {diff1}")
 
-            print("service\tserver\ttype\twms\twcs\tantialiasing")
-            common_services = server0_services.intersection(server1_services)
-            for svc in common_services:
-                if servers[0]['services'][svc] != servers[1]['services'][svc]:
-                    print(f"{svc}\t{servers[0]['name']}\t{servers[0]['services'][svc]['type']}\t{servers[0]['services'][svc]['wms']}\t{servers[0]['services'][svc]['wcs']}\t{servers[0]['services'][svc]['antialiasing']}")
-                    print(f"{svc}\t{servers[1]['name']}\t{servers[1]['services'][svc]['type']}\t{servers[1]['services'][svc]['wms']}\t{servers[1]['services'][svc]['wcs']}\t{servers[1]['services'][svc]['antialiasing']}")
+        print("difference in service properties")
+        print("service\tserver\ttype\twms\twcs\tantialiasing")
+        common_services = server0_services.intersection(server1_services)
+        for svc in common_services:
+            if servers[0]['services'][svc] != servers[1]['services'][svc]:
+                print(f"{svc}\t{servers[0]['name']}\t{servers[0]['services'][svc]['type']}\t{servers[0]['services'][svc]['wms']}\t{servers[0]['services'][svc]['wcs']}\t{servers[0]['services'][svc]['antialiasing']}")
+                print(f"{svc}\t{servers[1]['name']}\t{servers[1]['services'][svc]['type']}\t{servers[1]['services'][svc]['wms']}\t{servers[1]['services'][svc]['wcs']}\t{servers[1]['services'][svc]['antialiasing']}")
     else:
         # print all services
         print("server\tservice\ttype\twms\twcs\tantialiasing")
