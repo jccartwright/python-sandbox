@@ -28,13 +28,12 @@ def main(args):
 
         # get a list of all services
         service_list = []
-        get_service_names(uri, service_list)
-        get_service_names(uri, service_list, None, 'ImageServer')
+        get_service_names(uri, service_list, None, args.service_type)
 
         # dictionary of each service's relevant properties
         capabilities = {}
         for service in service_list:
-            capabilities[service] = get_capabilities(name, service, token)
+            capabilities[service] = get_capabilities(uri, service, token, args.service_type)
 
         servers.append({'name': name, 'username': username, 'password': password, 'port': args.port, 'token': token,
                         'services': capabilities})
@@ -59,11 +58,15 @@ def main(args):
         print(diff1)
 
 
-def get_capabilities(server, service, token):
-    service_info = get_service_info(token, server, service)
+def get_capabilities(server, service, token, service_type):
+    service_info = get_service_info(token, server, service, service_type)
     wms = extension_enabled(service_info, 'WMSServer')
     wcs = extension_enabled(service_info, 'WCSServer')
-    antialiasing = service_info['properties']['antialiasingMode']
+    # some services, e.g. built-in SampleWorldCities don't have antialiasingMode property
+    try:
+        antialiasing = service_info['properties']['antialiasingMode']
+    except:
+        antialiasing = None
     return {'type': service_info['type'], 'wms': wms, 'wcs': wcs, 'antialiasing': antialiasing}
 
 
@@ -111,8 +114,8 @@ def get_token(username, password, servername):
     return data['token']
 
 
-def get_service_info(token, servername, servicename):
-    url = f"https://{servername}/arcgis/admin/services/{servicename}.MapServer"
+def get_service_info(token, servername, servicename, service_type):
+    url = f"https://{servername}/arcgis/admin/services/{servicename}.{service_type}"
     params = urlencode({'token': token, 'f': 'json'})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
 
@@ -148,6 +151,8 @@ if __name__ == "__main__":
     arg_parser.add_argument("--port", default="6443", help="server port")
     arg_parser.add_argument('--server', action='append', required=True,
                             help="fully-qualified target server name. specify once for each server")
+    arg_parser.add_argument('--service_type', default='MapServer', choices=['MapServer', 'ImageServer'],
+                            help="report on MapServer or ImageServer instances")
     arg_parser.add_argument("--diff", help="report only differences between servers", action="store_true")
     args = arg_parser.parse_args()
 
