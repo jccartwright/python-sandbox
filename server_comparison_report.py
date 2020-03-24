@@ -38,26 +38,36 @@ def main(args):
         servers.append({'name': name, 'username': username, 'password': password, 'port': args.port, 'token': token,
                         'services': capabilities})
 
-    # print all services
-    # server_name = servers[0]['name']
-    # capabilities = servers[0]['services']
-    # print("server\tservice\ttype\twms\twcs\tantialiasing")
-    # for service in capabilities:
-    #     print(f"{server_name}\t{service}\t{capabilities[service]['type']}\t{capabilities[service]['wms']}\t{capabilities[service]['wcs']}\t{capabilities[service]['antialiasing']}")
+    if args.diff:
+        # services not on both servers
+        server0_services = set(servers[0]['services'].keys())
+        server1_services = set(servers[1]['services'].keys())
+        # expect to be sorted
+        if server0_services == server1_services:
+            print(f"{servers[0]['name']} and {servers[1]['name']} have the same services")
+        else:
+            diff0 = server0_services.difference(server1_services)
+            diff1 = server1_services.difference(server0_services)
+            if len(diff0):
+                print(f"services missing from {servers[1]['name']}: {diff0}")
+            if len(diff1):
+                print(f"services missing from {servers[0]['name']}: {diff1}")
 
-    # services not on both servers
-    server0_services = set(servers[0]['services'].keys())
-    server1_services = set(servers[1]['services'].keys())
-    # expect to be sorted
-    if server0_services == server1_services:
-        print(f"{servers[0]['name']} and {servers[1]['name']} have the same services")
+            print("service\tserver\ttype\twms\twcs\tantialiasing")
+            common_services = server0_services.intersection(server1_services)
+            for svc in common_services:
+                if servers[0]['services'][svc] != servers[1]['services'][svc]:
+                    print(f"{svc}\t{servers[0]['name']}\t{servers[0]['services'][svc]['type']}\t{servers[0]['services'][svc]['wms']}\t{servers[0]['services'][svc]['wcs']}\t{servers[0]['services'][svc]['antialiasing']}")
+                    print(f"{svc}\t{servers[1]['name']}\t{servers[1]['services'][svc]['type']}\t{servers[1]['services'][svc]['wms']}\t{servers[1]['services'][svc]['wcs']}\t{servers[1]['services'][svc]['antialiasing']}")
     else:
-        diff0 = server0_services.difference(server1_services)
-        diff1 = server1_services.difference(server0_services)
-        if len(diff0):
-            print(f"services missing from {servers[1]['name']}: {diff0}")
-        if len(diff1):
-           print(f"services missing from {servers[0]['name']}: {diff1}")
+        # print all services
+        print("server\tservice\ttype\twms\twcs\tantialiasing")
+        for server in servers:
+            server_name = server['name']
+            capabilities = server['services']
+            for service in capabilities:
+                print(f"{server_name}\t{service}\t{capabilities[service]['type']}\t{capabilities[service]['wms']}\t{capabilities[service]['wcs']}\t{capabilities[service]['antialiasing']}")
+
 
 def get_capabilities(server, service, token, service_type):
     service_info = get_service_info(token, server, service, service_type)
