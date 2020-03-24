@@ -54,9 +54,10 @@ def main(args):
     else:
         diff0 = server0_services.difference(server1_services)
         diff1 = server1_services.difference(server0_services)
-        print(diff0)
-        print(diff1)
-
+        if len(diff0):
+            print(f"services missing from {servers[1]['name']}: {diff0}")
+        if len(diff1):
+           print(f"services missing from {servers[0]['name']}: {diff1}")
 
 def get_capabilities(server, service, token, service_type):
     service_info = get_service_info(token, server, service, service_type)
