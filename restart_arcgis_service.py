@@ -23,6 +23,7 @@ def main(args):
 
 
 def stop_service(token, servername, servicename, service_type):
+    logging.info(f"stopping {service_type} service {servicename} on {servername}...")
     url = f"https://{servername}/arcgis/admin/services/{servicename}.{service_type}/stop"
     params = urlencode({'token': token, 'f': 'json'})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
@@ -35,11 +36,12 @@ def stop_service(token, servername, servicename, service_type):
     if not assert_json_success(data):
         # logging.warning(data)
         raise Exception("Error: response object represents an error.")
-
+    logging.info(data['status'])
     return data
 
 
 def start_service(token, servername, servicename, service_type):
+    logging.info(f"starting {service_type} service {servicename} on {servername}...")
     url = f"https://{servername}/arcgis/admin/services/{servicename}.{service_type}/start"
     params = urlencode({'token': token, 'f': 'json'})
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
@@ -53,6 +55,7 @@ def start_service(token, servername, servicename, service_type):
         # logging.warning(data)
         raise Exception("Error: response object represents an error.")
 
+    logging.info(data['status'])
     return data
 
 
