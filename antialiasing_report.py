@@ -15,8 +15,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def main():
     # setup command line arguments
     arg_parser = argparse.ArgumentParser(
-        description="""Enables the WMS extension on the specified MapServer instance. If a folder name is provided, 
-        all map services within that folder will be enabled"""
+        description="""report on the antialiasing property on the specified MapServer instance. If a folder name is provided, 
+        all map services within that folder will be checked"""
     )
     arg_parser.add_argument("username", help="user name")
     arg_parser.add_argument("password", help="password")
