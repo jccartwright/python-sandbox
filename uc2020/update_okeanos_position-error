@@ -1,0 +1,17 @@
+Your request has timed out.
+Traceback (most recent call last):
+  File "./update_okeanos_position.py", line 154, in <module>
+    main()
+  File "./update_okeanos_position.py", line 150, in main
+    update_gis_item(marker, in_port)
+  File "./update_okeanos_position.py", line 98, in update_gis_item
+    result = gis_item.layers[0].edit_features(updates=[point])
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/features/layer.py", line 1325, in edit_features
+    return self._con.post(path=edit_url, postdata=params, token=self._token)
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/_impl/connection.py", line 1159, in post
+    self._handle_json_error(resp_json['error'], errorcode)
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/_impl/connection.py", line 1180, in _handle_json_error
+    raise RuntimeError(errormessage)
+RuntimeError: Your request has timed out.
+(Error Code: 504)
+

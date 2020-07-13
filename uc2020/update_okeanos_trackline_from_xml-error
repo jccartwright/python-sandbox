@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "/home/esri/miniconda3/lib/python3.7/urllib/request.py", line 1317, in do_open
+    encode_chunked=req.has_header('Transfer-encoding'))
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 1244, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 1290, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 1239, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 1026, in _send_output
+    self.send(msg)
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 966, in send
+    self.connect()
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 1406, in connect
+    super().connect()
+  File "/home/esri/miniconda3/lib/python3.7/http/client.py", line 938, in connect
+    (self.host,self.port), self.timeout, self.source_address)
+  File "/home/esri/miniconda3/lib/python3.7/socket.py", line 707, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+  File "/home/esri/miniconda3/lib/python3.7/socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno -2] Name or service not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "./update_okeanos_trackline_from_xml.py", line 273, in <module>
+    geoplatform = get_agol_connection()
+  File "./update_okeanos_trackline_from_xml.py", line 164, in get_agol_connection
+    return GIS("https://noaa.maps.arcgis.com", username, password)
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/gis/__init__.py", line 334, in __init__
+    raise e
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/gis/__init__.py", line 322, in __init__
+    referer=self._referer)
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/_impl/portalpy.py", line 163, in __init__
+    client_id=client_id)
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/_impl/connection.py", line 290, in __init__
+    self.login(username, password, expiration, client_id)
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/_impl/connection.py", line 536, in login
+    resp = self.post('', { 'f': 'json' }, add_token=False) # probe portal to find auth scheme
+  File "/home/esri/miniconda3/lib/python3.7/site-packages/arcgis/_impl/connection.py", line 1107, in post
+    resp = opener.open(url, data=encoded_postdata.encode())
+  File "/home/esri/miniconda3/lib/python3.7/urllib/request.py", line 525, in open
+    response = self._open(req, data)
+  File "/home/esri/miniconda3/lib/python3.7/urllib/request.py", line 543, in _open
+    '_open', req)
+  File "/home/esri/miniconda3/lib/python3.7/urllib/request.py", line 503, in _call_chain
+    result = func(*args)
+  File "/home/esri/miniconda3/lib/python3.7/urllib/request.py", line 1360, in https_open
+    context=self._context, check_hostname=self._check_hostname)
+  File "/home/esri/miniconda3/lib/python3.7/urllib/request.py", line 1319, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno -2] Name or service not known>
